@@ -2,7 +2,6 @@
   "name": "sih-problem-browser",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -19,7 +18,19 @@
     "lucide-react": "^0.263.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "mongoose": "^7.5.0",
+    "axios": "^1.5.0",
+    "pizzip": "^3.1.4",
+    "docxtemplater": "^3.42.0",
+    "pptxgenjs": "^3.12.0",
+    "jszip": "^3.10.1",
+    "xml2js": "^0.6.2",
+    "sharp": "^0.32.5",
+    "nodemailer": "^6.9.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
