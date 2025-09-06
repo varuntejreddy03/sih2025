@@ -118,7 +118,7 @@ Generate comprehensive SIH-compliant content with technical depth, innovation fo
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY || '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'}`,
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
         'HTTP-Referer': 'https://sihpro.onrender.com',
         'X-Title': 'SIH 2025 Platform',
         'Content-Type': 'application/json',
