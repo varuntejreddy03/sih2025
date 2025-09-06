@@ -217,6 +217,7 @@ const Login = ({ onLoginSuccess, onSwitchToRegister }) => {
               </p>
             </div>
           </div>
+          </div>
         </div>
       </div>
     </div>
