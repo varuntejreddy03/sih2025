@@ -75,26 +75,30 @@ const ChangePassword = ({ teamId, onPasswordChanged, onCancel }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl max-w-md w-full p-6">
-        <div className="text-center mb-6">
-          <div className="mx-auto w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-            <Lock className="h-6 w-6 text-orange-600" />
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="relative max-w-md w-full">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 blur-3xl"></div>
+        <div className="relative bg-white/10 backdrop-blur-lg rounded-3xl border border-white/20 p-8 shadow-2xl">
+          <div className="text-center mb-8">
+            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-6 shadow-lg">
+              <Lock className="h-8 w-8 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-pink-500 bg-clip-text text-transparent">
+              🔒 Premium Security
+            </h2>
+            <p className="text-white/80 mt-2">Set your premium secure password</p>
           </div>
-          <h2 className="text-xl font-bold text-gray-900">Change Password</h2>
-          <p className="text-gray-600 mt-2">Please set your own secure password</p>
-        </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">
+          <div className="bg-red-500/20 border border-red-400/30 text-red-300 px-4 py-3 rounded-xl text-sm mb-6 backdrop-blur-sm">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Current Password
+            <label className="block text-sm font-semibold text-white mb-3">
+              🔑 Current Password
             </label>
             <div className="relative">
               <input
@@ -102,14 +106,14 @@ const ChangePassword = ({ teamId, onPasswordChanged, onCancel }) => {
                 name="current_password"
                 value={formData.current_password}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 pr-12"
+                className="w-full px-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent pr-12 backdrop-blur-sm"
                 placeholder="Enter current password"
                 required
               />
               <button
                 type="button"
                 onClick={() => togglePasswordVisibility('current')}
-                className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-4 text-white/60 hover:text-white transition-colors"
               >
                 {showPasswords.current ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
@@ -117,8 +121,8 @@ const ChangePassword = ({ teamId, onPasswordChanged, onCancel }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              New Password
+            <label className="block text-sm font-semibold text-white mb-3">
+              ✨ New Premium Password
             </label>
             <div className="relative">
               <input
@@ -126,14 +130,14 @@ const ChangePassword = ({ teamId, onPasswordChanged, onCancel }) => {
                 name="new_password"
                 value={formData.new_password}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 pr-12"
-                placeholder="Enter new password (min 6 characters)"
+                className="w-full px-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent pr-12 backdrop-blur-sm"
+                placeholder="Create secure password (min 6 chars)"
                 required
               />
               <button
                 type="button"
                 onClick={() => togglePasswordVisibility('new')}
-                className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-4 text-white/60 hover:text-white transition-colors"
               >
                 {showPasswords.new ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
@@ -141,8 +145,8 @@ const ChangePassword = ({ teamId, onPasswordChanged, onCancel }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Confirm New Password
+            <label className="block text-sm font-semibold text-white mb-3">
+              🔒 Confirm Premium Password
             </label>
             <div className="relative">
               <input
@@ -150,34 +154,34 @@ const ChangePassword = ({ teamId, onPasswordChanged, onCancel }) => {
                 name="confirm_password"
                 value={formData.confirm_password}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 pr-12"
-                placeholder="Confirm new password"
+                className="w-full px-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent pr-12 backdrop-blur-sm"
+                placeholder="Confirm your secure password"
                 required
               />
               <button
                 type="button"
                 onClick={() => togglePasswordVisibility('confirm')}
-                className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-4 text-white/60 hover:text-white transition-colors"
               >
                 {showPasswords.confirm ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
           </div>
 
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-4 pt-6">
             <button
               type="button"
               onClick={onCancel}
-              className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex-1 px-4 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl transition-all"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+              className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              {loading ? 'Changing...' : 'Change Password'}
+              {loading ? '🔄 Updating...' : '✨ Secure Password'}
             </button>
           </div>
         </form>

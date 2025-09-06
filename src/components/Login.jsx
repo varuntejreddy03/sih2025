@@ -90,31 +90,33 @@ const Login = ({ onLoginSuccess, onSwitchToRegister }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-6">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-8">
-          <div className="text-center mb-8">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mb-4">
-              <LogIn className="h-8 w-8 text-white" />
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 blur-3xl"></div>
+          <div className="relative bg-white/10 backdrop-blur-lg rounded-3xl border border-white/20 p-8 shadow-2xl">
+            <div className="text-center mb-8">
+              <div className="mx-auto w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-6 shadow-lg">
+                <LogIn className="h-10 w-10 text-white" />
+              </div>
+              <h1 className="text-4xl font-black bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent mb-3">
+                ✨ Premium Login
+              </h1>
+              <p className="text-white/80 text-lg">
+                Access your SIH 2025 Premium Platform
+              </p>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Team Login
-            </h1>
-            <p className="text-gray-600">
-              Enter your team credentials to access SIH 2025
-            </p>
-          </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-6">
+            <div className="bg-red-500/20 border border-red-400/30 text-red-300 px-4 py-3 rounded-xl text-sm mb-6 backdrop-blur-sm">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                <User className="h-4 w-4" />
+              <label className="block text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                <User className="h-5 w-5 text-purple-400" />
                 Team ID
               </label>
               <input
@@ -122,15 +124,15 @@ const Login = ({ onLoginSuccess, onSwitchToRegister }) => {
                 name="team_id"
                 value={formData.team_id}
                 onChange={handleInputChange}
-                placeholder="Enter your team ID"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter your premium team ID"
+                className="w-full px-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                <Lock className="h-4 w-4" />
+              <label className="block text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                <Lock className="h-5 w-5 text-purple-400" />
                 Password
               </label>
               <input
@@ -138,8 +140,8 @@ const Login = ({ onLoginSuccess, onSwitchToRegister }) => {
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                placeholder="Enter your password"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter your secure password"
+                className="w-full px-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm"
                 required
               />
             </div>
@@ -147,70 +149,70 @@ const Login = ({ onLoginSuccess, onSwitchToRegister }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-semibold"
+              className="w-full px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               {loading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Accessing Premium...
                 </>
               ) : (
                 <>
-                  <LogIn className="mr-2 h-4 w-4" />
-                  Sign In
+                  <LogIn className="mr-2 h-5 w-5" />
+                  ✨ Access Premium Platform
                 </>
               )}
             </button>
           </form>
 
           {resetSuccess && (
-            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm text-center">
+            <div className="bg-green-500/20 border border-green-400/30 text-green-300 px-4 py-3 rounded-xl text-sm text-center backdrop-blur-sm mt-4">
               {resetSuccess}
             </div>
           )}
 
-          <div className="space-y-4 mt-6">
+          <div className="space-y-4 mt-8">
             <div className="text-center">
               <button
                 type="button"
                 onClick={() => setShowResetPassword(!showResetPassword)}
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline"
+                className="text-sm text-purple-300 hover:text-purple-200 font-medium hover:underline transition-colors"
               >
-                Forgot Password?
+                🔑 Forgot Password?
               </button>
             </div>
             
             {showResetPassword && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm text-blue-700 mb-3">
+              <div className="bg-purple-500/20 border border-purple-400/30 rounded-xl p-4 backdrop-blur-sm">
+                <p className="text-sm text-white/80 mb-3">
                   Enter your Team ID and we'll send a new password to your registered email.
                 </p>
                 <button
                   onClick={handleResetPassword}
                   disabled={resetLoading || !formData.team_id}
-                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold"
                 >
                   {resetLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Sending...
+                      Sending Reset...
                     </>
                   ) : (
-                    'Reset Password'
+                    '📧 Reset Password'
                   )}
                 </button>
               </div>
             )}
             
             <div className="text-center">
-              <p className="text-sm text-gray-600">
-                Don't have an account?{' '}
+              <p className="text-sm text-white/70">
+                New to premium platform?{' '}
                 <button
                   type="button"
                   onClick={onSwitchToRegister}
-                  className="text-blue-600 font-medium hover:underline"
+                  className="text-yellow-400 font-semibold hover:text-yellow-300 hover:underline transition-colors"
                 >
-                  Register your team first
+                  ✨ Register Premium Team
                 </button>
               </p>
             </div>

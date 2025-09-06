@@ -478,17 +478,20 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
                     </Button>
                   </div>
 
-                  <div className="mb-6 p-4 bg-white/5 rounded-2xl border border-white/10">
-                    <h3 className="font-bold text-white mb-3 flex items-center gap-2">
-                      🎯 Selected Problem:
+                  <div className="mb-6 p-6 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl border border-purple-400/30 backdrop-blur-sm">
+                    <h3 className="font-bold text-white mb-4 flex items-center gap-2 text-lg">
+                      🏆 Premium Problem Selected:
                     </h3>
-                    <p className="text-white/80 mb-3 leading-relaxed">{selectedProblem.title}</p>
-                    <div className="flex gap-2">
-                      <span className="px-3 py-1 bg-gradient-to-r from-blue-500/80 to-cyan-500/80 text-white text-xs rounded-full font-medium">
+                    <p className="text-white/90 mb-4 leading-relaxed font-medium">{selectedProblem.title}</p>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-sm rounded-full font-semibold shadow-lg">
                         {selectedProblem.theme.length > 25 ? selectedProblem.theme.substring(0, 25) + '...' : selectedProblem.theme}
                       </span>
-                      <span className="px-3 py-1 bg-gradient-to-r from-green-500/80 to-emerald-500/80 text-white text-xs rounded-full font-medium">
+                      <span className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm rounded-full font-semibold shadow-lg">
                         {selectedProblem.category}
+                      </span>
+                      <span className="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-sm rounded-full font-semibold shadow-lg">
+                        ✨ Premium
                       </span>
                     </div>
                   </div>

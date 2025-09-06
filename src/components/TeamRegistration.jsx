@@ -83,26 +83,28 @@ const TeamRegistration = ({ onRegistrationSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-6">
-      <div className="w-full max-w-2xl">
-        <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-8">
-          <div className="text-center mb-8">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mb-4">
-              <Users className="h-8 w-8 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-6">
+      <div className="w-full max-w-3xl">
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 blur-3xl"></div>
+          <div className="relative bg-white/10 backdrop-blur-lg rounded-3xl border border-white/20 p-8 shadow-2xl">
+            <div className="text-center mb-8">
+              <div className="mx-auto w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-6 shadow-lg">
+                <Users className="h-10 w-10 text-white" />
+              </div>
+              <h1 className="text-4xl font-black bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent mb-3">
+                ✨ Premium Registration
+              </h1>
+              <p className="text-white/80 text-lg">
+                Join the elite SIH 2025 Premium Platform
+              </p>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Team Registration
-            </h1>
-            <p className="text-gray-600">
-              Register your team for Smart India Hackathon 2025
-            </p>
-          </div>
 
           {message && (
-            <div className={`p-4 rounded-lg text-sm mb-6 ${
+            <div className={`p-4 rounded-xl text-sm mb-6 backdrop-blur-sm ${
               message.includes('successfully') 
-                ? 'bg-green-50 border border-green-200 text-green-700' 
-                : 'bg-red-50 border border-red-200 text-red-700'
+                ? 'bg-green-500/20 border border-green-400/30 text-green-300' 
+                : 'bg-red-500/20 border border-red-400/30 text-red-300'
             }`}>
               {message.includes('successfully') && <CheckCircle className="inline h-4 w-4 mr-2" />}
               {message}
@@ -112,97 +114,98 @@ const TeamRegistration = ({ onRegistrationSuccess }) => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Team ID *
+                <label className="block text-sm font-semibold text-white mb-3">
+                  🎯 Premium Team ID *
                 </label>
                 <input
                   type="text"
                   name="team_id"
                   value={formData.team_id}
                   onChange={handleInputChange}
-                  placeholder="e.g., TEAM001"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="e.g., PREMIUM_TEAM_001"
+                  className="w-full px-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Team Name *
+                <label className="block text-sm font-semibold text-white mb-3">
+                  ✨ Team Name *
                 </label>
                 <input
                   type="text"
                   name="team_name"
                   value={formData.team_name}
                   onChange={handleInputChange}
-                  placeholder="e.g., Tech Innovators"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="e.g., Elite Tech Innovators"
+                  className="w-full px-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm"
                   required
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                Contact Email *
+              <label className="block text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                <Mail className="h-5 w-5 text-purple-400" />
+                📧 Premium Contact Email *
               </label>
               <input
                 type="email"
                 name="contact_email"
                 value={formData.contact_email}
                 onChange={handleInputChange}
-                placeholder="team.leader@college.edu"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="premium.team@college.edu"
+                className="w-full px-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm"
                 required
               />
-              <p className="text-sm text-gray-500 mt-1">
-                Password will be sent to this email address
+              <p className="text-sm text-white/60 mt-2">
+                🔑 Premium credentials will be sent to this email
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                <User className="h-4 w-4" />
-                Team Members (Add at least 6 members)
+              <label className="block text-sm font-semibold text-white mb-4 flex items-center gap-2">
+                <User className="h-5 w-5 text-purple-400" />
+                👥 Premium Team Members (Minimum 6 required)
               </label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {formData.members.map((member, index) => (
                   <input
                     key={index}
                     type="text"
                     value={member}
                     onChange={(e) => handleMemberChange(index, e.target.value)}
-                    placeholder={`Member ${index + 1} name`}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder={`✨ Premium Member ${index + 1}`}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm"
                   />
                 ))}
               </div>
-              <p className="text-sm text-gray-500 mt-2">
-                Enter names of team members. Minimum 6 members required.
+              <p className="text-sm text-white/60 mt-3">
+                🏆 Enter names of your elite team members. Minimum 6 required for premium access.
               </p>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-semibold"
+              className="w-full px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               {loading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Registering Team...
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Creating Premium Account...
                 </>
               ) : (
                 <>
-                  <Users className="mr-2 h-4 w-4" />
-                  Register Team
+                  <Users className="mr-2 h-5 w-5" />
+                  ✨ Join Premium Platform
                 </>
               )}
             </button>
           </form>
         </div>
       </div>
+          </form>
     </div>
   );
 };
