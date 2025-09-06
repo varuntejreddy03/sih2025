@@ -203,6 +203,7 @@ const TeamRegistration = ({ onRegistrationSuccess }) => {
               )}
             </button>
           </form>
+          </div>
         </div>
       </div>
     </div>
