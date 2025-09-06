@@ -205,7 +205,6 @@ const TeamRegistration = ({ onRegistrationSuccess }) => {
           </form>
         </div>
       </div>
-          </form>
     </div>
   );
 };
