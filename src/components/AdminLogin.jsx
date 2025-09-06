@@ -28,7 +28,7 @@ const AdminLogin = ({ onAdminLogin }) => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5001/api/admin_login', {
+      const response = await fetch('https://sihpro.onrender.com/api/admin_login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

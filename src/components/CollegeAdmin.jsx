@@ -14,7 +14,7 @@ const CollegeAdmin = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/admin/dashboard');
+      const response = await fetch('https://sihpro.onrender.com/api/admin/dashboard');
       const data = await response.json();
       setTeams(data.teams);
       setStatistics(data.statistics);
@@ -27,7 +27,7 @@ const CollegeAdmin = () => {
 
   const fetchAnalytics = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/analytics/performance');
+      const response = await fetch('https://sihpro.onrender.com/api/analytics/performance');
       const data = await response.json();
       setAnalytics(data);
     } catch (error) {
@@ -36,7 +36,7 @@ const CollegeAdmin = () => {
   };
 
   const exportAllTeams = () => {
-    window.open('http://localhost:5001/api/export/all_teams', '_blank');
+    window.open('https://sihpro.onrender.com/api/export/all_teams', '_blank');
   };
 
   if (loading) {

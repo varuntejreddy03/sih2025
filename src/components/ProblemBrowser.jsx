@@ -38,7 +38,7 @@ const ProblemBrowser = ({ teamId: propTeamId }) => {
 
   // Load problems from JSON file
   useEffect(() => {
-    fetch('http://localhost:5001/api/problems')
+    fetch('https://sihpro.onrender.com/api/problems')
       .then(response => response.json())
       .then(data => {
         setProblems(data);
@@ -50,7 +50,7 @@ const ProblemBrowser = ({ teamId: propTeamId }) => {
   // Load selections
   const loadSelections = async () => {
     try {
-      const response = await fetch(`http://localhost:5001/api/dashboard/${teamId}`);
+      const response = await fetch(`https://sihpro.onrender.com/api/dashboard/${teamId}`);
       if (response.ok) {
         const data = await response.json();
         setSelections(Array.isArray(data) ? data : []);
@@ -67,7 +67,7 @@ const ProblemBrowser = ({ teamId: propTeamId }) => {
   // Load SPOC Dashboard
   const loadSPOCDashboard = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/spoc/dashboard');
+      const response = await fetch('https://sihpro.onrender.com/api/spoc/dashboard');
       const data = await response.json();
       setSPOCData(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -79,7 +79,7 @@ const ProblemBrowser = ({ teamId: propTeamId }) => {
   // Load generated content
   const loadGeneratedContent = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/generated_content');
+      const response = await fetch('https://sihpro.onrender.com/api/generated_content');
       if (response.ok) {
         const data = await response.json();
         setGeneratedContent(data);
@@ -107,7 +107,7 @@ const ProblemBrowser = ({ teamId: propTeamId }) => {
     
     setIsEnhancing(true);
     try {
-      const response = await fetch('http://localhost:5001/enhance_content', {
+      const response = await fetch('https://sihpro.onrender.com/enhance_content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -133,7 +133,7 @@ const ProblemBrowser = ({ teamId: propTeamId }) => {
 
   const downloadPPT = async (selection) => {
     try {
-      const response = await fetch('http://localhost:5001/download_ppt', {
+      const response = await fetch('https://sihpro.onrender.com/download_ppt', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -199,7 +199,7 @@ const ProblemBrowser = ({ teamId: propTeamId }) => {
     
     try {
       // Generate PPT
-      const pptResponse = await fetch('http://localhost:5001/generate_ppt', {
+      const pptResponse = await fetch('https://sihpro.onrender.com/generate_ppt', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -215,7 +215,7 @@ const ProblemBrowser = ({ teamId: propTeamId }) => {
         const result = await pptResponse.json();
         
         // Save selection
-        await fetch('http://localhost:5001/api/save_selection', {
+        await fetch('https://sihpro.onrender.com/api/save_selection', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

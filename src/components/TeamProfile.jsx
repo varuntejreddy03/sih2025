@@ -11,7 +11,7 @@ const TeamProfile = ({ teamId, onClose }) => {
   useEffect(() => {
     const fetchTeamProfile = async () => {
       try {
-        const response = await fetch(`http://localhost:5001/api/team/profile/${teamId}`);
+        const response = await fetch(`https://sihpro.onrender.com/api/team/profile/${teamId}`);
         if (response.ok) {
           const data = await response.json();
           setTeamData(data);

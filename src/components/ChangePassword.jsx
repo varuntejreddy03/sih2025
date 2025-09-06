@@ -48,7 +48,7 @@ const ChangePassword = ({ teamId, onPasswordChanged, onCancel }) => {
     setError('');
     
     try {
-      const response = await fetch('http://localhost:5001/api/change_password', {
+      const response = await fetch('https://sihpro.onrender.com/api/change_password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

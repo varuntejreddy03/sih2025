@@ -46,7 +46,7 @@ const TeamRegistration = ({ onRegistrationSuccess }) => {
     }
 
     try {
-      const response = await fetch(getApiUrl('/api/register_team'), {
+      const response = await fetch('https://sihpro.onrender.com/api/register_team', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

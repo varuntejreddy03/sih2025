@@ -2,6 +2,7 @@
   "name": "sih-problem-browser",
   "private": true,
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

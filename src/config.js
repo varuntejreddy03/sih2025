@@ -4,7 +4,7 @@ const config = {
     API_BASE_URL: 'http://localhost:10000'
   },
   production: {
-    API_BASE_URL: '' // Use relative URLs in production
+    API_BASE_URL: 'https://sihpro.onrender.com' // Render backend URL
   }
 };
 
@@ -13,8 +13,5 @@ export const API_BASE_URL = config[environment].API_BASE_URL;
 
 // Helper function to get full API URL
 export const getApiUrl = (endpoint) => {
-  if (environment === 'production') {
-    return endpoint; // Use relative URLs in production
-  }
   return `${API_BASE_URL}${endpoint}`;
 };

@@ -72,87 +72,80 @@ app.get('/api/problems', (req, res) => {
   res.json(formattedProblems);
 });
 
-// Enhanced AI Research Functions with problem-specific content generation
+// Enhanced AI Research with OpenRouter GPT-4 integration
 async function researchProblem(psTitle, psDescription, idea) {
   try {
-    // Create problem-specific research prompt using actual data
-    const researchPrompt = `Problem: ${psTitle}\n\nContext: ${psDescription}\n\nSolution Approach: ${idea}\n\nGenerate specific technical solution with implementation details, feasibility analysis, and measurable impact metrics for this exact problem statement.`;
+    const researchPrompt = `Problem: ${psTitle}\n\nContext: ${psDescription}\n\nSolution Approach: ${idea}\n\nAs an expert SIH mentor, generate a comprehensive technical solution with:\n1. Detailed implementation approach\n2. Technical architecture\n3. Feasibility analysis\n4. Impact metrics\n5. Risk mitigation strategies\n\nProvide specific, actionable content for SIH 2025 presentation.`;
     
-    // Try AI models with shorter, more focused prompts
-    const models = [
-      'microsoft/DialoGPT-medium',
-      'facebook/bart-large-cnn',
-      'google/flan-t5-base'
-    ];
-    
-    let aiResponse = null;
-    for (const model of models) {
-      try {
-        console.log(`🤖 Generating content using ${model}`);
-        const response = await axios.post(
-          `https://api-inference.huggingface.co/models/${model}`,
-          { 
-            inputs: researchPrompt.substring(0, 500), // Limit input length
-            parameters: { 
-              max_length: 200, 
-              temperature: 0.6,
-              do_sample: true
-            } 
+    console.log('🤖 Generating content using OpenRouter GPT-4');
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer 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',
+        'HTTP-Referer': 'https://sihpro.onrender.com',
+        'X-Title': 'SIH 2025 Platform',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'openai/gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are an expert SIH mentor and technology consultant. Generate comprehensive, practical solutions for hackathon presentations.'
           },
-          { 
-            headers: { 'Authorization': `Bearer ${HF_TOKEN}` },
-            timeout: 8000
+          {
+            role: 'user',
+            content: researchPrompt
           }
-        );
-        
-        if (response.data && response.data[0] && (response.data[0].generated_text || response.data[0].summary_text)) {
-          aiResponse = response.data[0];
-          console.log(`✅ AI content generated using ${model}`);
-          break;
-        }
-      } catch (modelError) {
-        console.log(`❌ Model ${model} failed: ${modelError.message}`);
-        continue;
+        ],
+        max_tokens: 1500,
+        temperature: 0.7
+      })
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      const aiContent = data.choices[0]?.message?.content;
+      if (aiContent) {
+        console.log('✅ AI content generated using OpenRouter GPT-4');
+        return generateEnhancedContent(psTitle, psDescription, idea, aiContent);
       }
     }
     
-    // Find the actual problem from JSON data
-    const actualProblem = problems.find(p => 
-      p.problem_statement_id === psTitle || 
-      p.problem_statement_title === psTitle ||
-      p.title === psTitle
-    );
-    
-    const fullDescription = actualProblem ? actualProblem.description : psDescription;
-    const fullTitle = actualProblem ? actualProblem.problem_statement_title || actualProblem.title : psTitle;
-    
-    // Generate problem-specific content using actual problem data
-    const domainInsights = generateProblemSpecificContent(fullTitle, fullDescription, idea, aiResponse);
-    
-    console.log(`✅ Content generated - Problem-specific: ${domainInsights.summary.split('\n').length} points, AI: ${!!aiResponse ? 'Enhanced' : 'Fallback'}`);
-    
-    return {
-      summary: domainInsights.summary,
-      technicalApproach: domainInsights.technicalApproach,
-      feasibility: domainInsights.feasibility,
-      impact: domainInsights.impact,
-      references: domainInsights.references,
-      aiGenerated: !!aiResponse,
-      aiContent: aiResponse?.generated_text || aiResponse?.summary_text || null
-    };
   } catch (error) {
-    console.log('📝 Generating problem-specific content from description');
-    const actualProblem = problems.find(p => 
-      p.problem_statement_id === psTitle || 
-      p.problem_statement_title === psTitle ||
-      p.title === psTitle
-    );
-    
-    const fullDescription = actualProblem ? actualProblem.description : psDescription;
-    const fullTitle = actualProblem ? actualProblem.problem_statement_title || actualProblem.title : psTitle;
-    
-    return generateProblemSpecificContent(fullTitle, fullDescription, idea, null);
+    console.log('📝 Generating fallback content:', error.message);
   }
+  
+  return generateEnhancedContent(psTitle, psDescription, idea, null);
+}
+
+function generateEnhancedContent(psTitle, psDescription, idea, aiContent) {
+  const actualProblem = problems.find(p => 
+    p.problem_statement_id === psTitle || 
+    p.problem_statement_title === psTitle ||
+    p.title === psTitle
+  );
+  
+  const fullDescription = actualProblem ? actualProblem.description : psDescription;
+  const fullTitle = actualProblem ? actualProblem.problem_statement_title || actualProblem.title : psTitle;
+  
+  let summary = aiContent ? `AI-Enhanced Solution:\n${aiContent.substring(0, 500)}...\n\n` : '';
+  summary += `• Comprehensive solution addressing: ${fullTitle}\n`;
+  summary += `• Advanced technology integration with real-time capabilities\n`;
+  summary += `• User-centric design ensuring accessibility and scalability\n`;
+  summary += `• Data-driven approach with predictive analytics\n`;
+  summary += `• Cloud-native architecture for optimal performance\n`;
+  summary += `• Integration with existing government systems and policies`;
+  
+  return {
+    summary,
+    technicalApproach: `• Modern React + Node.js full-stack architecture\n• MongoDB/PostgreSQL database with optimized queries\n• RESTful APIs with JWT authentication and authorization\n• Cloud deployment on AWS/Azure with auto-scaling\n• Real-time data processing with WebSocket integration\n• Mobile-responsive design with PWA capabilities\n• AI/ML integration for intelligent decision making\n• Comprehensive security with end-to-end encryption`,
+    feasibility: `• High technical feasibility using proven technology stack\n• Strong market demand with government policy support\n• Cost-effective implementation with 18-month ROI\n• Scalable solution from pilot to national deployment\n• Experienced development team with relevant expertise\n• Clear regulatory compliance pathway established\n• Risk mitigation strategies for all identified challenges\n• Sustainable business model with multiple revenue streams`,
+    impact: `• Direct benefit to 100,000+ users in first deployment phase\n• 45% improvement in operational efficiency and productivity\n• 60% reduction in processing time and administrative costs\n• Enhanced service delivery quality with 99.9% uptime SLA\n• Creation of 1,000+ direct and indirect employment opportunities\n• Significant contribution to Digital India mission objectives\n• Measurable social impact with quantified success metrics\n• Environmental benefits through digital transformation`,
+    references: ['Digital India Initiative Guidelines 2024', 'Government Technology Standards', 'Industry Best Practices Documentation', 'Academic Research Papers', 'International Technology Standards'],
+    aiGenerated: !!aiContent,
+    aiContent: aiContent
+  };
 }
 
 // Generate AI prompt for architecture diagrams
@@ -1928,6 +1921,23 @@ app.get('/api/analytics/performance', async (req, res) => {
     res.json(analytics);
   } catch (error) {
     console.error('Analytics error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get generated content for viewing
+app.get('/api/content/:ps_id/:team_id', async (req, res) => {
+  try {
+    const { ps_id, team_id } = req.params;
+    const research = await ResearchCache.findOne({ ps_id, team_id }).sort({ created_at: -1 });
+    
+    if (!research) {
+      return res.status(404).json({ error: 'Content not found' });
+    }
+    
+    const data = JSON.parse(research.research_data);
+    res.json(data.research);
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });

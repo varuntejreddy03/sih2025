@@ -21,6 +21,10 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
   const [showSelections, setShowSelections] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [teamId, setTeamId] = useState(propTeamId || 'TEAM001');
+  const [showContentModal, setShowContentModal] = useState(false);
+  const [generatedContent, setGeneratedContent] = useState(null);
+  const [compareMode, setCompareMode] = useState(false);
+  const [selectedProblems, setSelectedProblems] = useState([]);
 
   useEffect(() => {
     if (propTeamId) {
@@ -72,7 +76,7 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
         a.click();
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
-        alert('🏆 ENHANCED SIH content downloaded!\\n📋 Google Slides template instructions included\\n🎯 Architecture diagram prompts for AI tools\\n📊 Ready for Google Slides integration');
+        // Success handled silently
       } else {
         const errorData = await response.json();
         alert(`Download failed: ${errorData.error || 'Unknown error'}`);
@@ -101,9 +105,28 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
   const categories = [...new Set(problems.map(p => p.category))];
 
   const handleSelectProblem = (problem) => {
-    setSelectedProblem(problem);
-    setShowModal(true);
-    setIdeaDraft('');
+    if (compareMode) {
+      if (selectedProblems.length < 2 && !selectedProblems.find(p => p.ps_id === problem.ps_id)) {
+        setSelectedProblems([...selectedProblems, problem]);
+      }
+    } else {
+      setSelectedProblem(problem);
+      setShowModal(true);
+      setIdeaDraft('');
+    }
+  };
+
+  const viewGeneratedContent = async (selection) => {
+    try {
+      const response = await fetch(`https://sihpro.onrender.com/api/content/${selection.ps_id}/${selection.team_id}`);
+      if (response.ok) {
+        const content = await response.json();
+        setGeneratedContent(JSON.stringify(content, null, 2));
+        setShowContentModal(true);
+      }
+    } catch (error) {
+      console.error('Error loading content:', error);
+    }
   };
 
   const handleGeneratePPT = async () => {
@@ -141,8 +164,6 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
           })
         });
 
-        const scoreMsg = result.scores ? `\\n🏆 AI Scores - Novelty: ${result.scores.novelty}/10, Feasibility: ${result.scores.feasibility}/10, Impact: ${result.scores.impact}/10` : '';
-        alert(`✅ ${result.message || 'SIH Content generated successfully'} and selection saved!${scoreMsg}\\n\\n🔗 Use Google Slides template for final presentation`);
         setShowModal(false);
         loadSelections();
       } else {
@@ -170,19 +191,26 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 flex justify-between items-center"
+          className="mb-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4"
         >
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+            <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
               🚀 SIH 2025 Problem Browser
             </h1>
-            <p className="text-gray-600">Generate comprehensive content for Google Slides template with AI research</p>
+            <p className="text-gray-600 text-sm md:text-base">Generate comprehensive content for Google Slides template with AI research</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+            <Button
+              onClick={() => setCompareMode(!compareMode)}
+              variant={compareMode ? "default" : "outline"}
+              className="gap-2 w-full sm:w-auto"
+            >
+              {compareMode ? 'Exit Compare' : 'Compare Problems'}
+            </Button>
             <Button
               onClick={() => { setShowSelections(!showSelections); loadSelections(); }}
               variant={showSelections ? "default" : "outline"}
-              className="gap-2"
+              className="gap-2 w-full sm:w-auto"
             >
               <Eye className="h-4 w-4" />
               {showSelections ? 'Hide Selections' : 'View Selections'}
@@ -190,7 +218,7 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
             <Button
               onClick={() => setShowProfile(true)}
               variant="outline"
-              className="gap-2"
+              className="gap-2 w-full sm:w-auto"
             >
               <User className="h-4 w-4" />
               Team Profile
@@ -208,8 +236,8 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
         >
           <Card className="mb-6">
             <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div className="lg:col-span-2 relative">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div className="sm:col-span-2 lg:col-span-2 relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     placeholder="Search problems, themes, organizations..."
@@ -278,22 +306,31 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
                           transition={{ delay: index * 0.1 }}
                           className="border border-gray-200 rounded-lg p-4"
                         >
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="font-semibold text-gray-900">{selection.ps_title}</h3>
-                              <p className="text-sm text-gray-600">PS ID: {selection.ps_id}</p>
-                              <p className="text-sm text-gray-600">Team: {selection.team_id}</p>
+                          <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-gray-900 text-sm md:text-base">{selection.ps_title}</h3>
+                              <p className="text-xs md:text-sm text-gray-600">PS ID: {selection.ps_id}</p>
+                              <p className="text-xs md:text-sm text-gray-600">Team: {selection.team_id}</p>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full lg:w-auto">
+                              <Button
+                                onClick={() => viewGeneratedContent(selection)}
+                                size="sm"
+                                variant="outline"
+                                className="gap-2 w-full sm:w-auto text-xs md:text-sm"
+                              >
+                                <Eye className="h-3 w-3 md:h-4 md:w-4" />
+                                View Content
+                              </Button>
                               <Button
                                 onClick={() => downloadPPT(selection)}
                                 size="sm"
-                                className="gap-2"
+                                className="gap-2 w-full sm:w-auto text-xs md:text-sm"
                               >
-                                <Download className="h-4 w-4" />
-                                Download Content
+                                <Download className="h-3 w-3 md:h-4 md:w-4" />
+                                Download
                               </Button>
-                              <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                              <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full whitespace-nowrap">
                                 {selection.status}
                               </span>
                             </div>
@@ -325,7 +362,7 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
         >
           {filteredProblems.map((problem, index) => (
             <motion.div
@@ -355,10 +392,24 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
                   </div>
                   <Button
                     onClick={() => handleSelectProblem(problem)}
-                    className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white gap-2"
+                    className={`w-full gap-2 ${
+                      compareMode 
+                        ? selectedProblems.find(p => p.ps_id === problem.ps_id)
+                          ? 'bg-green-500 hover:bg-green-600 text-white'
+                          : selectedProblems.length >= 2
+                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'bg-blue-500 hover:bg-blue-600 text-white'
+                        : 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white'
+                    }`}
+                    disabled={compareMode && selectedProblems.length >= 2 && !selectedProblems.find(p => p.ps_id === problem.ps_id)}
                   >
                     <Sparkles className="h-4 w-4" />
-                    Select Problem
+                    {compareMode 
+                      ? selectedProblems.find(p => p.ps_id === problem.ps_id) 
+                        ? 'Selected' 
+                        : `Select (${selectedProblems.length}/2)`
+                      : 'Select Problem'
+                    }
                   </Button>
                 </CardContent>
               </Card>
@@ -379,7 +430,7 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto mx-4"
               >
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">
@@ -423,31 +474,136 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
                     </p>
                   </div>
 
-                  <div className="flex gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <Button
                       onClick={() => setShowModal(false)}
                       variant="outline"
-                      className="flex-1"
+                      className="flex-1 w-full"
                     >
                       Cancel
                     </Button>
                     <Button
                       onClick={handleGeneratePPT}
                       disabled={isGeneratingPPT}
-                      className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 gap-2"
+                      className="flex-1 w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 gap-2"
                     >
                       {isGeneratingPPT ? (
                         <>
                           <Loader2 className="h-4 w-4 animate-spin" />
-                          Generating Content...
+                          <span className="hidden sm:inline">Generating Content...</span>
+                          <span className="sm:hidden">Generating...</span>
                         </>
                       ) : (
                         <>
                           <Zap className="h-4 w-4" />
-                          Generate SIH Content
+                          <span className="hidden sm:inline">Generate SIH Content</span>
+                          <span className="sm:hidden">Generate</span>
                         </>
                       )}
                     </Button>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Content View Modal */}
+        <AnimatePresence>
+          {showContentModal && generatedContent && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto mx-4"
+              >
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <h2 className="text-xl font-bold text-gray-900">
+                      Generated Content
+                    </h2>
+                    <Button
+                      onClick={() => setShowContentModal(false)}
+                      variant="ghost"
+                      size="icon"
+                    >
+                      <X className="h-6 w-6" />
+                    </Button>
+                  </div>
+                  <div className="prose max-w-none">
+                    <pre className="whitespace-pre-wrap text-sm">{generatedContent}</pre>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Compare Modal */}
+        <AnimatePresence>
+          {compareMode && selectedProblems.length === 2 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto mx-4"
+              >
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <h2 className="text-xl font-bold text-gray-900">
+                      Compare Problems
+                    </h2>
+                    <Button
+                      onClick={() => {
+                        setSelectedProblems([]);
+                        setCompareMode(false);
+                      }}
+                      variant="ghost"
+                      size="icon"
+                    >
+                      <X className="h-6 w-6" />
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {selectedProblems.map((problem, index) => (
+                      <Card key={problem.ps_id} className="p-4">
+                        <h3 className="font-semibold mb-2">{problem.title}</h3>
+                        <div className="flex gap-2 mb-3">
+                          <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                            {problem.theme}
+                          </span>
+                          <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                            {problem.category}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-700 mb-4">
+                          {problem.description.substring(0, 300)}...
+                        </p>
+                        <Button
+                          onClick={() => {
+                            setSelectedProblem(problem);
+                            setShowModal(true);
+                            setSelectedProblems([]);
+                            setCompareMode(false);
+                          }}
+                          className="w-full"
+                        >
+                          Select This Problem
+                        </Button>
+                      </Card>
+                    ))}
                   </div>
                 </div>
               </motion.div>
