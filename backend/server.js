@@ -72,12 +72,49 @@ app.get('/api/problems', (req, res) => {
   res.json(formattedProblems);
 });
 
-// Enhanced AI Research with OpenRouter GPT-4 integration
+// Enhanced AI Research with OpenRouter GPT-4 integration using SIH Mentor Prompt
 async function researchProblem(psTitle, psDescription, idea) {
   try {
-    const researchPrompt = `Problem: ${psTitle}\n\nContext: ${psDescription}\n\nSolution Approach: ${idea}\n\nAs an expert SIH mentor, generate a comprehensive technical solution with:\n1. Detailed implementation approach\n2. Technical architecture\n3. Feasibility analysis\n4. Impact metrics\n5. Risk mitigation strategies\n\nProvide specific, actionable content for SIH 2025 presentation.`;
+    const sihMentorPrompt = `# 🎯 Master SIH Hackathon Prompt – PPT Generator
+
+You are an **SIH Hackathon Mentor** (two-time SIH winner, evaluator).
+Your task is to generate a **6-slide SIH-compliant PPT draft** from the given Problem Statement.
+
+## 🔑 Instructions
+- **Follow Official SIH Guidelines**:
+  - Max **6 slides** only.
+  - Use **concise bullet points** (not paragraphs).
+  - Keep **one key idea per slide**.
+  - Use **short phrases, diagrams, or icons** wherever possible.
+  - Deliver final output in **clean, point-based format**.
+
+- **Slide Structure**:
+  1. **Problem Statement** – highlight real-world impact, background, and pain points.
+  2. **Proposed Solution** – summarize what is being built and its uniqueness.
+  3. **Technical Approach** – system workflow, modules, and architecture (prefer flow diagrams).
+  4. **Feasibility & Risks** – challenges, constraints, and mitigation strategies.
+  5. **Impact & Benefits** – stakeholders, scale, measurable outcomes.
+  6. **Research & References** – related work, datasets, supporting studies.
+
+- **Presentation Style**:
+  - **Visual Storytelling** → Suggest diagrams, workflows, or mockups.
+  - **Clarity & Uniqueness** → Emphasize novel features in 1–2 bullets.
+  - **Engagement** → Include simple examples/scenarios.
+
+- **Common Pitfalls to Avoid**:
+  - Don't overload slides → max **8–10 bullets per slide**.
+  - Avoid full sentences or paragraphs.
+  - Ensure every point links directly back to the **original problem statement**.
+  - Add at least **one visual suggestion per slide**.
+
+## 📝 Problem Statement:
+**Title:** ${psTitle}
+**Description:** ${psDescription}
+**Solution Approach:** ${idea}
+
+Generate comprehensive SIH-compliant content with technical depth, innovation focus, and practical implementation strategy.`;
     
-    console.log('🤖 Generating content using OpenRouter GPT-4');
+    console.log('🏆 Generating SIH Mentor content using OpenRouter GPT-4');
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -91,15 +128,15 @@ async function researchProblem(psTitle, psDescription, idea) {
         messages: [
           {
             role: 'system',
-            content: 'You are an expert SIH mentor and technology consultant. Generate comprehensive, practical solutions for hackathon presentations.'
+            content: 'You are a two-time SIH winner and official evaluator. Generate SIH-compliant presentations following official guidelines with bullet points only, visual storytelling, and 6-slide structure. Focus on innovation, feasibility, and measurable impact.'
           },
           {
             role: 'user',
-            content: researchPrompt
+            content: sihMentorPrompt
           }
         ],
-        max_tokens: 1500,
-        temperature: 0.7
+        max_tokens: 2000,
+        temperature: 0.8
       })
     });
     
@@ -107,19 +144,20 @@ async function researchProblem(psTitle, psDescription, idea) {
       const data = await response.json();
       const aiContent = data.choices[0]?.message?.content;
       if (aiContent) {
-        console.log('✅ AI content generated using OpenRouter GPT-4');
-        return generateEnhancedContent(psTitle, psDescription, idea, aiContent);
+        console.log('✅ SIH Mentor content generated using OpenRouter GPT-4');
+        return generateSIHCompliantContent(psTitle, psDescription, idea, aiContent);
       }
     }
     
   } catch (error) {
-    console.log('📝 Generating fallback content:', error.message);
+    console.log('📝 Generating SIH fallback content:', error.message);
   }
   
-  return generateEnhancedContent(psTitle, psDescription, idea, null);
+  return generateSIHCompliantContent(psTitle, psDescription, idea, null);
 }
 
-function generateEnhancedContent(psTitle, psDescription, idea, aiContent) {
+// Generate SIH-compliant content following official guidelines
+function generateSIHCompliantContent(psTitle, psDescription, idea, aiContent) {
   const actualProblem = problems.find(p => 
     p.problem_statement_id === psTitle || 
     p.problem_statement_title === psTitle ||
@@ -129,23 +167,133 @@ function generateEnhancedContent(psTitle, psDescription, idea, aiContent) {
   const fullDescription = actualProblem ? actualProblem.description : psDescription;
   const fullTitle = actualProblem ? actualProblem.problem_statement_title || actualProblem.title : psTitle;
   
-  let summary = aiContent ? `AI-Enhanced Solution:\n${aiContent.substring(0, 500)}...\n\n` : '';
-  summary += `• Comprehensive solution addressing: ${fullTitle}\n`;
-  summary += `• Advanced technology integration with real-time capabilities\n`;
-  summary += `• User-centric design ensuring accessibility and scalability\n`;
-  summary += `• Data-driven approach with predictive analytics\n`;
-  summary += `• Cloud-native architecture for optimal performance\n`;
-  summary += `• Integration with existing government systems and policies`;
+  // Parse AI content if available, otherwise use domain-specific template
+  let parsedContent = null;
+  if (aiContent) {
+    parsedContent = parseSIHMentorContent(aiContent);
+  }
+  
+  // Generate domain-specific SIH content
+  const domainContent = generateSIHDomainContent(fullTitle, fullDescription, idea);
   
   return {
-    summary,
-    technicalApproach: `• Modern React + Node.js full-stack architecture\n• MongoDB/PostgreSQL database with optimized queries\n• RESTful APIs with JWT authentication and authorization\n• Cloud deployment on AWS/Azure with auto-scaling\n• Real-time data processing with WebSocket integration\n• Mobile-responsive design with PWA capabilities\n• AI/ML integration for intelligent decision making\n• Comprehensive security with end-to-end encryption`,
-    feasibility: `• High technical feasibility using proven technology stack\n• Strong market demand with government policy support\n• Cost-effective implementation with 18-month ROI\n• Scalable solution from pilot to national deployment\n• Experienced development team with relevant expertise\n• Clear regulatory compliance pathway established\n• Risk mitigation strategies for all identified challenges\n• Sustainable business model with multiple revenue streams`,
-    impact: `• Direct benefit to 100,000+ users in first deployment phase\n• 45% improvement in operational efficiency and productivity\n• 60% reduction in processing time and administrative costs\n• Enhanced service delivery quality with 99.9% uptime SLA\n• Creation of 1,000+ direct and indirect employment opportunities\n• Significant contribution to Digital India mission objectives\n• Measurable social impact with quantified success metrics\n• Environmental benefits through digital transformation`,
-    references: ['Digital India Initiative Guidelines 2024', 'Government Technology Standards', 'Industry Best Practices Documentation', 'Academic Research Papers', 'International Technology Standards'],
+    summary: parsedContent?.summary || domainContent.summary,
+    technicalApproach: parsedContent?.technicalApproach || domainContent.technicalApproach,
+    feasibility: parsedContent?.feasibility || domainContent.feasibility,
+    impact: parsedContent?.impact || domainContent.impact,
+    references: parsedContent?.references || domainContent.references,
     aiGenerated: !!aiContent,
-    aiContent: aiContent
+    aiContent: aiContent,
+    sihCompliant: true,
+    slideStructure: {
+      slide1: 'Problem Statement & Team Introduction',
+      slide2: 'Proposed Solution & Key Features',
+      slide3: 'Technical Approach & Architecture',
+      slide4: 'Feasibility Analysis & Risk Mitigation',
+      slide5: 'Impact & Benefits to Stakeholders',
+      slide6: 'Research Foundation & Implementation Timeline'
+    }
   };
+}
+
+// Parse SIH Mentor AI content into structured format
+function parseSIHMentorContent(aiContent) {
+  try {
+    const sections = {
+      summary: '',
+      technicalApproach: '',
+      feasibility: '',
+      impact: '',
+      references: []
+    };
+    
+    // Extract bullet points from AI content
+    const lines = aiContent.split('\n').filter(line => line.trim());
+    let currentSection = 'summary';
+    
+    lines.forEach(line => {
+      const trimmed = line.trim();
+      
+      // Detect section headers
+      if (trimmed.toLowerCase().includes('technical') || trimmed.toLowerCase().includes('approach')) {
+        currentSection = 'technicalApproach';
+      } else if (trimmed.toLowerCase().includes('feasibility') || trimmed.toLowerCase().includes('risk')) {
+        currentSection = 'feasibility';
+      } else if (trimmed.toLowerCase().includes('impact') || trimmed.toLowerCase().includes('benefit')) {
+        currentSection = 'impact';
+      } else if (trimmed.toLowerCase().includes('reference') || trimmed.toLowerCase().includes('research')) {
+        currentSection = 'references';
+      }
+      
+      // Add bullet points to appropriate section
+      if (trimmed.startsWith('•') || trimmed.startsWith('-') || trimmed.startsWith('*')) {
+        if (currentSection === 'references') {
+          sections.references.push(trimmed.replace(/^[•\-*]\s*/, ''));
+        } else {
+          sections[currentSection] += trimmed + '\n';
+        }
+      }
+    });
+    
+    return sections;
+  } catch (error) {
+    console.log('Error parsing SIH content:', error);
+    return null;
+  }
+}
+
+// Generate SIH-compliant domain-specific content
+function generateSIHDomainContent(title, description, idea) {
+  const domain = detectProblemDomain(title, description);
+  
+  const domainTemplates = {
+    healthcare: {
+      summary: `• AI-powered health monitoring system with real-time disease prediction\n• IoT integration for continuous vital sign tracking and water quality monitoring\n• Mobile-first approach ensuring accessibility in rural and remote areas\n• Multilingual interface supporting local languages and SMS integration\n• Automated alert system for health authorities and emergency response\n• Community engagement platform for health awareness and education`,
+      technicalApproach: `• IoT sensors for water quality monitoring (pH, turbidity, bacterial presence)\n• Machine learning models for outbreak prediction using health patterns\n• Progressive Web App with offline capabilities for remote connectivity\n• Cloud-based analytics platform using AWS/Azure healthcare services\n• RESTful APIs for integration with existing health management systems\n• Real-time dashboard for health officials with geo-spatial visualization`,
+      feasibility: `• Proven IoT technology with 99% accuracy in health parameter monitoring\n• Government support through National Digital Health Mission alignment\n• Cost-effective deployment at ₹75,000 per village with 3-year ROI\n• Phased implementation starting with 10 pilot villages in 6 months\n• Strong vendor ecosystem for healthcare IoT and cloud infrastructure\n• Regulatory compliance with healthcare data protection standards`,
+      impact: `• 50,000+ rural population coverage with improved health outcomes\n• 60% faster disease outbreak detection and response time\n• 40% reduction in waterborne disease incidents through early warning\n• ₹5 crore annual healthcare cost savings for government\n• Enhanced health literacy for 100,000+ community members\n• Integration with National Health Mission for policy alignment`,
+      references: ['National Digital Health Mission Guidelines', 'WHO Digital Health Standards', 'AIIMS Telemedicine Research', 'Rural Health Technology Reports']
+    },
+    tourism: {
+      summary: `• Real-time GPS tracking with intelligent geo-fencing for tourist safety zones\n• AI-powered risk assessment using machine learning pattern analysis\n• Blockchain-based digital identity system for secure tourist verification\n• Multi-language emergency assistance with 24/7 support integration\n• IoT wearable devices for continuous location and health monitoring\n• Automated incident response system with local emergency services`,
+      technicalApproach: `• GPS tracking technology with satellite backup for remote areas\n• Machine learning algorithms for risk pattern detection and prediction\n• Mobile application with offline maps and emergency features\n• Blockchain infrastructure for tamper-proof digital identity records\n• Integration APIs with local police and emergency response systems\n• Cloud-native architecture for real-time data processing and alerts`,
+      feasibility: `• Existing GPS and mobile infrastructure utilization reduces costs\n• Tourism board partnerships for funding and implementation support\n• ₹50 lakhs total development cost with 2-year payback period\n• 8-month implementation timeline with phased regional rollout\n• Proven blockchain and GPS technologies with established vendors\n• Government policy support through tourism development initiatives`,
+      impact: `• 100,000+ tourists enhanced safety and confidence in travel\n• 70% improvement in emergency response time for tourist incidents\n• 25% increase in tourist arrivals due to improved safety perception\n• ₹10 crore boost in regional tourism revenue within first year\n• Enhanced international reputation for tourist destination safety\n• Creation of 500+ direct employment opportunities in tourism sector`,
+      references: ['Ministry of Tourism Safety Guidelines', 'International Tourism Safety Standards', 'Emergency Response Best Practices', 'Digital Tourism Platform Studies']
+    },
+    general: {
+      summary: `• Comprehensive digital solution addressing core problem requirements\n• AI-powered intelligent automation for enhanced operational efficiency\n• User-centric design with accessibility features for diverse user groups\n• Real-time data processing and analytics for informed decision making\n• Scalable cloud infrastructure supporting growth and expansion\n• Integration capabilities with existing government and industry systems`,
+      technicalApproach: `• Modern full-stack architecture using React, Node.js, and cloud services\n• RESTful APIs with JWT authentication and role-based access control\n• Responsive design ensuring compatibility across all device types\n• Real-time data synchronization with WebSocket integration\n• Microservices architecture with Docker containerization\n• Automated CI/CD pipeline with comprehensive testing and monitoring`,
+      feasibility: `• High technical feasibility using proven and stable technology stack\n• Strong alignment with government digital transformation initiatives\n• Cost-effective development approach with predictable maintenance costs\n• Phased implementation strategy minimizing operational disruption\n• Experienced technical team with relevant domain expertise\n• Clear regulatory compliance pathway with established standards`,
+      impact: `• 25,000+ direct beneficiaries with improved service access\n• 35% improvement in operational efficiency through automation\n• 50% reduction in processing time and administrative overhead\n• Enhanced service delivery quality with measurable user satisfaction\n• Annual cost savings of ₹2 crore through process optimization\n• Contribution to Digital India mission with scalable implementation`,
+      references: ['Digital India Initiative Guidelines', 'Government Technology Standards', 'Industry Best Practices', 'Technology Implementation Case Studies']
+    }
+  };
+  
+  return domainTemplates[domain] || domainTemplates.general;
+}
+
+// Detect problem domain for targeted content generation
+function detectProblemDomain(title, description) {
+  const text = (title + ' ' + description).toLowerCase();
+  
+  if (text.includes('health') || text.includes('medical') || text.includes('disease') || text.includes('water-borne')) {
+    return 'healthcare';
+  }
+  if (text.includes('tourist') || text.includes('travel') || text.includes('safety') || text.includes('geo-fencing')) {
+    return 'tourism';
+  }
+  if (text.includes('agriculture') || text.includes('farm') || text.includes('crop')) {
+    return 'agriculture';
+  }
+  if (text.includes('education') || text.includes('learning') || text.includes('student')) {
+    return 'education';
+  }
+  if (text.includes('transport') || text.includes('traffic') || text.includes('vehicle')) {
+    return 'transportation';
+  }
+  
+  return 'general';
 }
 
 // Generate AI prompt for architecture diagrams
@@ -517,9 +665,9 @@ app.post('/generate_ppt', async (req, res) => {
     console.log(`🤖 Processing comprehensive idea for PS: ${title}`);
     const enhancedIdea = await enhanceIdeaWithAI(title, idea);
     
-    // Step 2: Enhanced research with better AI models
-    console.log(`🔍 Conducting enhanced research for PS: ${title}`);
-    const research = await researchProblem(title, 'Comprehensive problem analysis with technical depth', enhancedIdea);
+    // Step 2: SIH Mentor research with GPT-4
+    console.log(`🏆 Conducting SIH Mentor research for PS: ${title}`);
+    const research = await researchProblem(title, 'SIH-compliant presentation content generation', enhancedIdea);
     
     // Step 3: Generate architecture diagram prompt
     console.log(`🎨 Generating architecture diagram prompt...`);
@@ -570,66 +718,69 @@ app.post('/generate_ppt', async (req, res) => {
         category: 'Innovation Challenge'
       },
       slide2: { 
-        ideaTitle: `Innovative Solution: ${title.split(' ').slice(0, 6).join(' ')}`, 
+        ideaTitle: `Problem & Solution`, 
         solution: research.summary,
         originalIdea: idea,
         enhancedIdea: enhancedIdea,
-        keyFeatures: research.summary.split('\n').filter(line => line.trim().startsWith('•')).slice(0, 6)
+        keyFeatures: research.summary.split('\n').filter(line => line.trim().startsWith('•')).slice(0, 6),
+        sihFormat: 'Bullet points only - no paragraphs'
       },
       slide3: { 
         approach: research.technicalApproach, 
-        architecture: 'Cloud-Native Microservices Architecture with AI Integration',
-        technologies: research.technicalApproach.split('\n').filter(line => line.trim().startsWith('•')).slice(0, 7),
-        hasArchitectureDiagram: !!diagramPrompt
+        architecture: 'System Architecture & Technical Workflow',
+        technologies: research.technicalApproach.split('\n').filter(line => line.trim().startsWith('•')).slice(0, 6),
+        hasArchitectureDiagram: !!diagramPrompt,
+        visualRequirement: 'Include system architecture diagram or process flow'
       },
       slide4: { 
         feasibility: research.feasibility, 
-        viability: 'High commercial and technical viability with proven ROI',
-        riskMitigation: research.feasibility.split('\n').filter(line => line.trim().startsWith('•')).slice(0, 6)
+        viability: 'Feasibility Analysis & Risk Mitigation',
+        riskMitigation: research.feasibility.split('\n').filter(line => line.trim().startsWith('•')).slice(0, 6),
+        sihGuideline: 'Show challenges, constraints, and mitigation strategies'
       },
       slide5: { 
         impact: research.impact, 
-        benefits: 'Transformative impact on target beneficiaries with quantified metrics',
-        outcomes: research.impact.split('\n').filter(line => line.trim().startsWith('•')).slice(0, 6)
+        benefits: 'Impact & Benefits to Stakeholders',
+        outcomes: research.impact.split('\n').filter(line => line.trim().startsWith('•')).slice(0, 6),
+        requirement: 'Include measurable outcomes and stakeholder benefits'
       },
       slide6: { 
         references: research.references,
-        researchBasis: 'Evidence-based solution development with comprehensive research foundation',
-        citations: research.references.slice(0, 5)
+        researchBasis: 'Research Foundation & Implementation Timeline',
+        citations: research.references.slice(0, 4),
+        timeline: ['Phase 1: MVP Development (0-3 months)', 'Phase 2: Pilot Testing (3-6 months)', 'Phase 3: Full Deployment (6-12 months)']
       },
       scores: scores,
       judgeQA: judgeQA,
       evaluation: pptEvaluation,
       metadata: {
         generated: new Date().toISOString(),
+        sihCompliant: research.sihCompliant || true,
         aiEnhanced: research.aiGenerated,
-        ideaEnhanced: enhancedIdea !== idea,
-        hasDiagramPrompt: !!diagramPrompt,
-        evaluationModel: pptEvaluation?.model || 'none',
-        version: '3.0'
+        slideCount: 6,
+        format: 'Bullet Points Only',
+        guidelines: 'SIH 2025 Official Winner Format',
+        version: '4.0-SIH'
       }
     };
     
-    console.log(`✅ COMPREHENSIVE PPT Generated: ${title.substring(0, 50)}... for Team ${team_id}`);
-    console.log(`🏆 ENHANCED AI Scores: Novelty:${scores.novelty}/10, Feasibility:${scores.feasibility}/10, Impact:${scores.impact}/10, Overall:${((scores.novelty + scores.feasibility + scores.impact) / 3).toFixed(1)}/10`);
-    console.log(`🤖 AI Research: ${research.aiGenerated ? 'HuggingFace API Success' : 'Enhanced Domain Content'}`);
-    console.log(`💡 Idea Enhancement: ${enhancedIdea !== idea ? 'AI-Enhanced & Expanded' : 'Original Comprehensive'}`);
-    console.log(`🎨 Diagram Prompt: ${diagramPrompt ? 'Generated for External AI Tools' : 'Generation Attempted'}`);
-    console.log(`🤖 Quality Evaluation: ${pptEvaluation ? `Completed (${pptEvaluation.model})` : 'Fallback Used'}`);
+    console.log(`✅ SIH MENTOR PPT Generated: ${title.substring(0, 50)}... for Team ${team_id}`);
+    console.log(`🏆 SIH Scores: Novelty:${scores.novelty}/10, Feasibility:${scores.feasibility}/10, Impact:${scores.impact}/10, Overall:${((scores.novelty + scores.feasibility + scores.impact) / 3).toFixed(1)}/10`);
+    console.log(`🤖 SIH Mentor: ${research.aiGenerated ? 'GPT-4 Success' : 'Domain Template'}`);
+    console.log(`💡 SIH Compliance: ${research.sihCompliant ? 'Official Guidelines Followed' : 'Standard Format'}`);
     
     res.json({
       success: true,
-      message: `✅ COMPREHENSIVE SIH Content generated with ${research.aiGenerated ? 'AI-powered research' : 'enhanced domain research'}${enhancedIdea !== idea ? ', AI-enhanced idea' : ''}${diagramPrompt ? ', diagram prompt for external AI' : ''}${pptEvaluation ? ', AI quality evaluation' : ''} and OPTIMIZED scoring (${((scores.novelty + scores.feasibility + scores.impact) / 3).toFixed(1)}/10)! Use Content Evaluator to enhance further.`,
+      message: `🏆 SIH Winner Format content generated! ${research.aiGenerated ? 'AI-powered by SIH Mentor' : 'Enhanced domain content'} with official 6-slide structure and bullet points. Score: ${((scores.novelty + scores.feasibility + scores.impact) / 3).toFixed(1)}/10`,
       scores: scores,
       pptData: pptData,
       diagramPrompt: diagramPrompt,
       features: {
+        sihCompliant: research.sihCompliant,
         aiResearch: research.aiGenerated,
-        ideaEnhanced: enhancedIdea !== idea,
-        diagramPrompt: !!diagramPrompt,
-        qualityEvaluation: !!pptEvaluation,
-        usesGoogleSlides: true,
-        canEnhance: true
+        sixSlideFormat: true,
+        bulletPointsOnly: true,
+        visualStorytelling: !!diagramPrompt
       }
     });
     

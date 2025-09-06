@@ -118,15 +118,56 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
 
   const viewGeneratedContent = async (selection) => {
     try {
-      const response = await fetch(`https://sihpro.onrender.com/api/content/${selection.ps_id}/${selection.team_id}`);
+      const response = await fetch(getApiUrl(`/api/content/${selection.ps_id}/${selection.team_id}`));
       if (response.ok) {
         const content = await response.json();
-        setGeneratedContent(JSON.stringify(content, null, 2));
+        setGeneratedContent(formatSIHContent(content));
+        setShowContentModal(true);
+      } else {
+        setGeneratedContent('Content not found. Please generate PPT first.');
         setShowContentModal(true);
       }
     } catch (error) {
       console.error('Error loading content:', error);
+      setGeneratedContent('Error loading content. Please try again.');
+      setShowContentModal(true);
     }
+  };
+
+  const formatSIHContent = (content) => {
+    if (typeof content === 'string') return content;
+    
+    let formatted = '🏆 SIH 2025 WINNER FORMAT CONTENT\n';
+    formatted += '=' .repeat(50) + '\n\n';
+    
+    if (content.summary) {
+      formatted += 'SLIDE 2 - PROBLEM & SOLUTION:\n';
+      formatted += content.summary + '\n\n';
+    }
+    
+    if (content.technicalApproach) {
+      formatted += 'SLIDE 3 - TECHNICAL APPROACH:\n';
+      formatted += content.technicalApproach + '\n\n';
+    }
+    
+    if (content.feasibility) {
+      formatted += 'SLIDE 4 - FEASIBILITY & RISKS:\n';
+      formatted += content.feasibility + '\n\n';
+    }
+    
+    if (content.impact) {
+      formatted += 'SLIDE 5 - IMPACT & BENEFITS:\n';
+      formatted += content.impact + '\n\n';
+    }
+    
+    if (content.references) {
+      formatted += 'SLIDE 6 - RESEARCH & REFERENCES:\n';
+      content.references.forEach((ref, i) => {
+        formatted += `• ${ref}\n`;
+      });
+    }
+    
+    return formatted;
   };
 
   const handleGeneratePPT = async () => {
@@ -191,37 +232,43 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4"
+          className="mb-6 md:mb-8"
         >
-          <div>
-            <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
-              🚀 SIH 2025 Problem Browser
+          <div className="text-center mb-6">
+            <h1 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent mb-3">
+              🏆 SIH 2025 Winner Platform
             </h1>
-            <p className="text-gray-600 text-sm md:text-base">Generate comprehensive content for Google Slides template with AI research</p>
+            <p className="text-gray-600 text-base md:text-lg max-w-2xl mx-auto">
+              Generate SIH-compliant presentations following official 6-slide format with AI mentor guidance
+            </p>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+          
+          <div className="flex flex-wrap justify-center gap-2 md:gap-3">
             <Button
               onClick={() => setCompareMode(!compareMode)}
               variant={compareMode ? "default" : "outline"}
-              className="gap-2 w-full sm:w-auto"
+              size="sm"
+              className="gap-2"
             >
-              {compareMode ? 'Exit Compare' : 'Compare Problems'}
+              {compareMode ? 'Exit Compare' : 'Compare'}
             </Button>
             <Button
               onClick={() => { setShowSelections(!showSelections); loadSelections(); }}
               variant={showSelections ? "default" : "outline"}
-              className="gap-2 w-full sm:w-auto"
+              size="sm"
+              className="gap-2"
             >
               <Eye className="h-4 w-4" />
-              {showSelections ? 'Hide Selections' : 'View Selections'}
+              {showSelections ? 'Hide' : 'View'} Selections
             </Button>
             <Button
               onClick={() => setShowProfile(true)}
               variant="outline"
-              className="gap-2 w-full sm:w-auto"
+              size="sm"
+              className="gap-2"
             >
               <User className="h-4 w-4" />
-              Team Profile
+              Profile
             </Button>
           </div>
         </motion.div>
@@ -234,45 +281,47 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <Card className="mb-6">
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div className="sm:col-span-2 lg:col-span-2 relative">
+          <Card className="mb-4 md:mb-6 shadow-sm">
+            <CardContent className="p-4 md:p-6">
+              <div className="space-y-3 md:space-y-0 md:grid md:grid-cols-4 md:gap-4">
+                <div className="md:col-span-2 relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
-                    placeholder="Search problems, themes, organizations..."
-                    className="pl-10"
+                    placeholder="Search problems, themes..."
+                    className="pl-10 h-10"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
 
                 <select
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="h-10 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
                   value={selectedTheme}
                   onChange={(e) => setSelectedTheme(e.target.value)}
                 >
                   <option value="">All Themes</option>
                   {themes.map(theme => (
-                    <option key={theme} value={theme}>{theme}</option>
+                    <option key={theme} value={theme}>{theme.length > 20 ? theme.substring(0, 20) + '...' : theme}</option>
                   ))}
                 </select>
 
-                <select
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                >
-                  <option value="">All Categories</option>
-                  {categories.map(category => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </select>
+                <div className="flex gap-2">
+                  <select
+                    className="flex-1 h-10 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                  >
+                    <option value="">All Categories</option>
+                    {categories.map(category => (
+                      <option key={category} value={category}>{category}</option>
+                    ))}
+                  </select>
 
-                <Button onClick={clearFilters} variant="outline" className="gap-2">
-                  <Filter className="h-4 w-4" />
-                  Clear
-                </Button>
+                  <Button onClick={clearFilters} variant="outline" size="sm" className="gap-1 px-3">
+                    <Filter className="h-3 w-3" />
+                    Clear
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -392,14 +441,14 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
                   </div>
                   <Button
                     onClick={() => handleSelectProblem(problem)}
-                    className={`w-full gap-2 ${
+                    className={`w-full gap-2 h-10 text-sm font-medium ${
                       compareMode 
                         ? selectedProblems.find(p => p.ps_id === problem.ps_id)
                           ? 'bg-green-500 hover:bg-green-600 text-white'
                           : selectedProblems.length >= 2
                           ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                           : 'bg-blue-500 hover:bg-blue-600 text-white'
-                        : 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white'
+                        : 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-md hover:shadow-lg transition-all'
                     }`}
                     disabled={compareMode && selectedProblems.length >= 2 && !selectedProblems.find(p => p.ps_id === problem.ps_id)}
                   >
@@ -408,7 +457,7 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
                       ? selectedProblems.find(p => p.ps_id === problem.ps_id) 
                         ? 'Selected' 
                         : `Select (${selectedProblems.length}/2)`
-                      : 'Select Problem'
+                      : '🏆 Generate SIH PPT'
                     }
                   </Button>
                 </CardContent>
@@ -461,17 +510,19 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
 
                   <div className="mb-6">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Your Idea Draft (Optional - AI will enhance or generate if empty)
+                      💡 Your Solution Idea (Optional - SIH Mentor AI will enhance)
                     </label>
                     <textarea
-                      className="w-full h-32 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Leave empty for AI to generate a comprehensive solution, or add your own ideas for AI enhancement..."
+                      className="w-full h-28 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                      placeholder="Describe your solution approach or leave empty for AI to generate comprehensive SIH-compliant content..."
                       value={ideaDraft}
                       onChange={(e) => setIdeaDraft(e.target.value)}
                     />
-                    <p className="text-sm text-gray-500 mt-2">
-                      🚀 AI will generate comprehensive content for Google Slides template with diagram prompts and quality evaluation
-                    </p>
+                    <div className="mt-2 p-2 bg-orange-50 rounded-md">
+                      <p className="text-xs text-orange-700">
+                        🏆 <strong>SIH Mentor AI</strong> will generate official 6-slide format with bullet points, technical diagrams, and judge Q&A preparation
+                      </p>
+                    </div>
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-3">
@@ -485,19 +536,17 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
                     <Button
                       onClick={handleGeneratePPT}
                       disabled={isGeneratingPPT}
-                      className="flex-1 w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 gap-2"
+                      className="flex-1 w-full h-11 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 gap-2 font-semibold shadow-lg hover:shadow-xl transition-all"
                     >
                       {isGeneratingPPT ? (
                         <>
                           <Loader2 className="h-4 w-4 animate-spin" />
-                          <span className="hidden sm:inline">Generating Content...</span>
-                          <span className="sm:hidden">Generating...</span>
+                          <span>Generating SIH Content...</span>
                         </>
                       ) : (
                         <>
-                          <Zap className="h-4 w-4" />
-                          <span className="hidden sm:inline">Generate SIH Content</span>
-                          <span className="sm:hidden">Generate</span>
+                          <Sparkles className="h-4 w-4" />
+                          <span>🏆 Generate SIH Winner PPT</span>
                         </>
                       )}
                     </Button>
@@ -536,8 +585,15 @@ const ProblemBrowserEnhanced = ({ teamId: propTeamId }) => {
                       <X className="h-6 w-6" />
                     </Button>
                   </div>
-                  <div className="prose max-w-none">
-                    <pre className="whitespace-pre-wrap text-sm">{generatedContent}</pre>
+                  <div className="max-w-none">
+                    <div className="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto">
+                      <pre className="whitespace-pre-wrap text-sm text-gray-800 font-mono leading-relaxed">{generatedContent}</pre>
+                    </div>
+                    <div className="mt-4 p-3 bg-orange-50 rounded-lg">
+                      <p className="text-sm text-orange-700">
+                        🏆 <strong>SIH Guidelines:</strong> Use this content with the official SIH template. Replace template text with these bullet points while keeping the visual design.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </motion.div>
