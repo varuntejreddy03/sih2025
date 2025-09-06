@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: sih-platform
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        value: mongodb+srv://varuntejreddynallavelli_db_user:kuOO9qTA6f2x61B9@sihcollege.dqkwxyc.mongodb.net/sih_platform
+      - key: HF_TOKEN
+        value: your_huggingface_token_here
+      - key: EMAIL_USER
+        value: jntuhmaths@gmail.com
+      - key: EMAIL_PASS
+        value: mesk ndce leev mltg

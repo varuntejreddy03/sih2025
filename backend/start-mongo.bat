@@ -1,0 +1,6 @@
+@echo off
+echo Starting SIH Backend Server with MongoDB...
+cd /d "%~dp0"
+echo Connecting to MongoDB Atlas...
+node server-mongo.js
+pause
